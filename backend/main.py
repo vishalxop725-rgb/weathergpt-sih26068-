@@ -186,7 +186,7 @@ def health_check():
 
 _weather_cache = {}
 
-WEATHER_CACHE_SECONDS = 60
+WEATHER_CACHE_SECONDS = 300
 
 
 # ============================================================
