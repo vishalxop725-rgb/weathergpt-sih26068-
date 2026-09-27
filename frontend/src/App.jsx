@@ -34,7 +34,7 @@ L.Marker.prototype.options.icon = defaultIcon;
 // API BASE URL
 // ============================================================
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://weathergpt-sih26068-production-136b.up.railway.app";
 
 // ============================================================
 // CHAT LOCATIONS
