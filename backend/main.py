@@ -285,7 +285,9 @@ def resolve_location(location="Delhi"):
 def get_weather_data_for_location(location="Delhi"):
     """
     Fetch current weather and 7-day forecast for a location.
-    Results are cached for 60 seconds per location.
+    Results are cached for 5 minutes per location. If the live
+    fetch fails (e.g. rate limiting), falls back to the last
+    successfully cached response if one exists.
     """
 
     resolved_location = resolve_location(location)
@@ -307,7 +309,7 @@ def get_weather_data_for_location(location="Delhi"):
     current_time = time.time()
 
     # --------------------------------------------------------
-    # Return cached data if available
+    # Return cached data if still fresh
     # --------------------------------------------------------
 
     if cache_key in _weather_cache:
@@ -345,27 +347,40 @@ def get_weather_data_for_location(location="Delhi"):
         "forecast_days": 7
     }
 
-    response = httpx.get(
-        OPEN_METEO_URL,
-        params=params,
-        timeout=10.0
-    )
+    try:
+        response = httpx.get(
+            OPEN_METEO_URL,
+            params=params,
+            timeout=10.0
+        )
 
-    response.raise_for_status()
+        response.raise_for_status()
 
-    data = response.json()
+        data = response.json()
 
-    # --------------------------------------------------------
-    # Store in cache
-    # --------------------------------------------------------
+        # ------------------------------------------------
+        # Store in cache
+        # ------------------------------------------------
 
-    _weather_cache[cache_key] = {
-        "time": current_time,
-        "data": data
-    }
+        _weather_cache[cache_key] = {
+            "time": current_time,
+            "data": data
+        }
 
-    return data
+        return data
 
+    except Exception as e:
+
+        # ------------------------------------------------
+        # Fall back to the last known cached data, even if
+        # it's older than WEATHER_CACHE_SECONDS, rather than
+        # failing outright (e.g. during upstream rate limits)
+        # ------------------------------------------------
+
+        if cache_key in _weather_cache:
+            return _weather_cache[cache_key]["data"]
+
+        raise e
 
 # ============================================================
 # DEFAULT WEATHER DATA — DELHI
