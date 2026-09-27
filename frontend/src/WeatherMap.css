@@ -1,0 +1,368 @@
+/* =========================================================
+   WEATHER MAP  (all classes start with wm- so they cannot
+   clash with the rest of the app)
+   ========================================================= */
+
+.wm-container {
+  text-align: left;
+  color: #172033;
+  font-size: 14px;
+  line-height: 1.5;
+  width: 100%;
+}
+
+/* ---------- Toolbar ---------- */
+
+.wm-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.wm-layers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wm-layer-button {
+  border: 1px solid #dce3eb;
+  background: #ffffff;
+  color: #4e5b70;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.wm-layer-button:hover {
+  background: #f1f6fb;
+  color: #2878c8;
+}
+
+.wm-layer-button.wm-active {
+  background: #2878c8;
+  border-color: #2878c8;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.wm-source {
+  background: #eaf4ff;
+  color: #216db7;
+  border-radius: 20px;
+  padding: 6px 13px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* ---------- Map + panel layout ---------- */
+
+.wm-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.wm-map-wrap {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  height: 520px;
+  border: 1px solid #e5eaf1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #eaf0f6;
+}
+
+.wm-map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Text on the circle marker */
+
+.wm-marker-label {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.wm-marker-label::before {
+  display: none;
+}
+
+/* ---------- Side panel ---------- */
+
+.wm-panel {
+  background: #ffffff;
+  border: 1px solid #e5eaf1;
+  border-radius: 16px;
+  padding: 20px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.wm-panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  font-size: 15px;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.wm-panel-title span {
+  font-weight: normal;
+  font-size: 12px;
+  color: #7a8495;
+}
+
+.wm-big {
+  font-size: 38px;
+  font-weight: bold;
+  color: #172033;
+  line-height: 1.1;
+}
+
+.wm-muted {
+  margin: 6px 0 0;
+  color: #727d8f;
+  font-size: 13px;
+}
+
+.wm-note-rain {
+  margin: 10px 0 0;
+  padding: 9px 11px;
+  background: #eef6ff;
+  border-radius: 10px;
+  color: #216db7;
+  font-size: 13px;
+}
+
+.wm-subtitle {
+  margin: 18px 0 8px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #7a8495;
+}
+
+.wm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wm-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: #f8fafc;
+  font-size: 13px;
+}
+
+.wm-row span {
+  color: #5b667a;
+}
+
+.wm-row-bar {
+  display: grid;
+  grid-template-columns: 78px 1fr 58px;
+}
+
+.wm-row-bar strong {
+  text-align: right;
+}
+
+.wm-bar-track {
+  height: 8px;
+  background: #e5eaf1;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.wm-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+}
+
+/* ---------- Alerts inside the panel ---------- */
+
+.wm-warning {
+  background: #fff8e6;
+  border: 1px solid #f3e2b0;
+  color: #7a5a00;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.wm-alert {
+  background: #f8fafc;
+  border-left: 5px solid #3aa675;
+  border-radius: 9px;
+  padding: 10px 12px;
+}
+
+.wm-alert strong {
+  display: block;
+  font-size: 13px;
+}
+
+.wm-alert span {
+  display: block;
+  color: #7a8495;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.wm-alert p {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #4e5b70;
+}
+
+/* ---------- Legend + footnote ---------- */
+
+.wm-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 14px;
+  color: #4e5b70;
+  font-size: 12px;
+}
+
+.wm-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.wm-legend i {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.wm-footnote {
+  margin: 12px 0 0;
+  color: #8b95a5;
+  font-size: 11px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .wm-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .wm-map-wrap {
+    height: 400px;
+  }
+
+  .wm-panel {
+    max-height: none;
+  }
+}
+
+/* =========================================================
+   MULTI-CITY ADDITIONS
+   ========================================================= */
+
+/* City selector chips */
+
+.wm-cities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.wm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #dce3eb;
+  background: #ffffff;
+  color: #4e5b70;
+  border-radius: 20px;
+  padding: 6px 13px;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+.wm-chip:hover {
+  background: #f1f6fb;
+  color: #2878c8;
+}
+
+.wm-chip.wm-active {
+  border-color: #2878c8;
+  background: #eaf4ff;
+  color: #216db7;
+  font-weight: bold;
+}
+
+.wm-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* City name under each circle on the map */
+
+.wm-city-label {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  color: #172033;
+  font-size: 11px;
+  font-weight: bold;
+  text-shadow:
+    0 0 3px #ffffff,
+    0 0 3px #ffffff,
+    0 0 3px #ffffff;
+}
+
+.wm-city-label::before {
+  display: none;
+}
+
+/* Value text inside circles (slightly smaller for 8 markers) */
+
+.wm-marker-label {
+  font-size: 12px;
+}
+
+/* Layout: give the map more room on wide screens */
+
+.wm-layout {
+  grid-template-columns: minmax(0, 1fr) 340px;
+}
+
+@media (max-width: 900px) {
+  .wm-layout {
+    grid-template-columns: 1fr;
+  }
+}

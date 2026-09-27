@@ -1,0 +1,1223 @@
+/* ============================================================
+   WEATHERGPT — DESIGN SYSTEM
+   ============================================================
+
+   CONCEPT: "Sky as canvas"
+   The live weather gradient is the environment the whole app
+   lives inside. Translucent glass panels float on top of it
+   like instruments on a cockpit display. A big, confident
+   numeric temperature is the anchor of the dashboard. Calm,
+   weather-instrument aesthetic — not a generic SaaS card kit.
+
+   TYPE:
+   - Space Grotesk — headings, the big temperature, nav labels
+   - Inter — body copy, inputs, chat text
+
+   COLOR TOKENS (light mode):
+   - --ink        #101820  near-black text
+   - --paper      #F7FAFC  card base
+   - --accent     #2B6CB5  deep sky blue (buttons, active states)
+   - --accent-2   #1D4ED8  pressed / stronger accent
+   - --glass      rgba(255,255,255,0.55)
+   - --glass-edge rgba(255,255,255,0.35)
+
+   Risk colors (alerts / advisory):
+   - red    #E53E3E
+   - orange #DD6B20
+   - yellow #D69E2E
+   - green  #2F9E60
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap");
+
+/* ============================================================
+   ROOT TOKENS
+   ============================================================ */
+
+:root {
+  --ink: #101820;
+  --ink-soft: #47566b;
+  --paper: #f7fafc;
+  --accent: #2b6cb5;
+  --accent-2: #1d4ed8;
+
+  --glass: rgba(255, 255, 255, 0.6);
+  --glass-strong: rgba(255, 255, 255, 0.82);
+  --glass-edge: rgba(255, 255, 255, 0.45);
+  --glass-shadow: rgba(16, 24, 32, 0.14);
+
+  --red: #e53e3e;
+  --red-bg: rgba(229, 62, 62, 0.12);
+  --orange: #dd6b20;
+  --orange-bg: rgba(221, 107, 32, 0.12);
+  --yellow: #c99a1e;
+  --yellow-bg: rgba(201, 154, 30, 0.14);
+  --green: #2f9e60;
+  --green-bg: rgba(47, 158, 96, 0.12);
+
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --radius-sm: 10px;
+
+  --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-body: "Inter", "Segoe UI", sans-serif;
+
+  --sky: linear-gradient(160deg, #eaf4fb 0%, #bcdcf2 45%, #7fb8e0 100%);
+  --sky-soft: rgba(191, 222, 242, 0.55);
+}
+
+/* Weather-driven sky gradients */
+
+.app[data-weather="clear"] {
+  --sky: linear-gradient(160deg, #fff3d6 0%, #ffd98a 22%, #8fd0ee 55%, #3f8fce 100%);
+  --sky-soft: rgba(255, 217, 138, 0.35);
+}
+
+.app[data-weather="cloudy"] {
+  --sky: linear-gradient(160deg, #eef2f6 0%, #d3dde6 45%, #a7b8c9 100%);
+  --sky-soft: rgba(167, 184, 201, 0.35);
+}
+
+.app[data-weather="fog"] {
+  --sky: linear-gradient(160deg, #e7e9ec 0%, #c7ccd3 50%, #9ba3ae 100%);
+  --sky-soft: rgba(155, 163, 174, 0.35);
+}
+
+.app[data-weather="rain"] {
+  --sky: linear-gradient(160deg, #8fb1cc 0%, #4d6d8c 50%, #223547 100%);
+  --sky-soft: rgba(34, 53, 71, 0.35);
+}
+
+.app[data-weather="snow"] {
+  --sky: linear-gradient(160deg, #ffffff 0%, #e6f1fb 45%, #bcd9ee 100%);
+  --sky-soft: rgba(188, 217, 238, 0.4);
+}
+
+.app[data-weather="storm"] {
+  --sky: linear-gradient(160deg, #4a4468 0%, #322c4d 45%, #171326 100%);
+  --sky-soft: rgba(23, 19, 38, 0.4);
+}
+
+.app[data-weather="default"] {
+  --sky: linear-gradient(160deg, #eaf4fb 0%, #bcdcf2 45%, #7fb8e0 100%);
+}
+
+/* Dark backgrounds (rain / storm) need light text on hero copy */
+.app[data-weather="rain"] .welcome h1,
+.app[data-weather="rain"] .welcome p,
+.app[data-weather="storm"] .welcome h1,
+.app[data-weather="storm"] .welcome p {
+  color: #f3f6fa;
+}
+
+.app[data-weather="rain"] .welcome .small-text,
+.app[data-weather="storm"] .welcome .small-text {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ============================================================
+   DARK MODE (basic, follows system preference)
+   ============================================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #eef2f6;
+    --ink-soft: #a9b6c6;
+    --paper: #141b24;
+
+    --glass: rgba(24, 32, 42, 0.62);
+    --glass-strong: rgba(24, 32, 42, 0.85);
+    --glass-edge: rgba(255, 255, 255, 0.08);
+    --glass-shadow: rgba(0, 0, 0, 0.45);
+  }
+
+  body {
+    background: #0c1218;
+  }
+
+  .stat-card,
+  .forecast-card,
+  .alert-card,
+  .chat-card,
+  .chat-page .chat-window,
+  .climate-card,
+  .advisory-card,
+  .alert-large,
+  .map-frame,
+  .suggestions button,
+  .chat-input-area,
+  .feature-heading {
+    background: var(--glass);
+    border-color: var(--glass-edge);
+  }
+
+  .navigation {
+    background: var(--glass-strong);
+  }
+
+  .topbar {
+    background: var(--glass-strong);
+  }
+
+  input,
+  select {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: var(--ink) !important;
+    border-color: var(--glass-edge) !important;
+  }
+
+  .bot-message p,
+  .user-message p {
+    color: var(--ink);
+  }
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Visible keyboard focus everywhere */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+
+.app {
+  min-height: 100vh;
+  background: var(--sky);
+  background-attachment: fixed;
+  transition: background 900ms ease;
+  padding-bottom: 60px;
+}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--glass-strong);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--glass-edge);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo span {
+  font-size: 30px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
+}
+
+.logo h2 {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.logo p {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 1px;
+}
+
+.top-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.top-actions button {
+  border: 1px solid var(--glass-edge);
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 9px 15px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.top-actions button:hover {
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+
+.navigation {
+  display: flex;
+  gap: 6px;
+  max-width: 1200px;
+  margin: 14px auto 0;
+  padding: 6px;
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-edge);
+  border-radius: 999px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.navigation::-webkit-scrollbar {
+  display: none;
+}
+
+.navigation button {
+  flex: 0 0 auto;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+  white-space: nowrap;
+}
+
+.navigation button:hover {
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.navigation button.active {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 6px 16px rgba(43, 108, 181, 0.35);
+}
+
+/* ============================================================
+   SHARED GLASS CARD
+   ============================================================ */
+
+.stat-card,
+.forecast-card,
+.alert-card,
+.chat-card,
+.climate-card,
+.advisory-card,
+.alert-large,
+.map-frame,
+.feature-heading {
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px var(--glass-shadow);
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 0;
+  display: grid;
+  gap: 22px;
+}
+
+.welcome {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 28px;
+  align-items: center;
+  padding: 8px 4px 18px;
+}
+
+.small-text {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--accent-2);
+  margin-bottom: 8px;
+}
+
+.welcome h1 {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.12;
+}
+
+.welcome h1 span {
+  color: var(--accent-2);
+}
+
+.welcome p {
+  margin-top: 12px;
+  max-width: 46ch;
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+
+.weather-main {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--glass-strong);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  box-shadow: 0 14px 34px var(--glass-shadow);
+}
+
+.weather-icon {
+  font-size: 58px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.18));
+}
+
+.weather-main strong {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--ink);
+  display: block;
+}
+
+.weather-main p {
+  color: var(--ink-soft);
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+/* Stats grid */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.stat-card {
+  padding: 18px 20px;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 34px var(--glass-shadow);
+}
+
+.stat-card p {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-transform: none;
+}
+
+.stat-card h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 6px 0 4px;
+  color: var(--ink);
+}
+
+.stat-card span {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+/* Content grid: forecast + alerts */
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 18px;
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.card-header h2 {
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.card-header p {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+.card-header button {
+  border: 1px solid var(--glass-edge);
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--accent-2);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  transition: background 160ms ease;
+  white-space: nowrap;
+}
+
+.card-header button:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.forecast-card,
+.alert-card {
+  padding: 20px;
+}
+
+.forecast {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.forecast > div {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  text-align: center;
+  padding: 12px 6px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.35);
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.forecast > div:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.forecast span {
+  font-size: 11px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.forecast b {
+  font-size: 22px;
+}
+
+.forecast strong {
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.forecast-details {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--glass-edge);
+  display: grid;
+  gap: 8px;
+}
+
+.forecast-detail-row {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr 1fr 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.detail-icon {
+  font-size: 20px;
+  text-align: center;
+}
+
+.detail-temp {
+  text-align: center;
+}
+
+.detail-temp span {
+  display: block;
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+
+.detail-temp strong {
+  font-size: 14px;
+}
+
+/* Alert (dashboard preview) */
+
+.alert-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: var(--red);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.alert {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.alert-symbol {
+  font-size: 22px;
+}
+
+.alert h3 {
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.alert p {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-top: 3px;
+}
+
+.explain-button {
+  margin-top: 14px;
+  width: 100%;
+  border: none;
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 11px;
+  border-radius: var(--radius-sm);
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.explain-button:hover {
+  background: var(--accent-2);
+  transform: translateY(-1px);
+}
+
+/* Chat teaser card */
+
+.chat-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 26px;
+}
+
+.chat-icon {
+  font-size: 40px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+.chat-content {
+  flex: 1;
+}
+
+.chat-content h2 {
+  font-size: 18px;
+  margin: 4px 0 6px;
+}
+
+.chat-content p {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.chat-button {
+  flex-shrink: 0;
+  border: none;
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.chat-button:hover {
+  background: var(--accent-2);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   FEATURE PAGE SHELL (Alerts / Map / Climate / Advisory)
+   ============================================================ */
+
+.feature-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 24px 0;
+  display: grid;
+  gap: 20px;
+}
+
+.feature-heading {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 26px;
+}
+
+.feature-heading > span {
+  font-size: 34px;
+  flex-shrink: 0;
+}
+
+.feature-heading h1 {
+  font-size: 24px;
+  margin-top: 2px;
+}
+
+.feature-heading p {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+  max-width: 60ch;
+}
+
+/* ============================================================
+   ALERTS PAGE
+   ============================================================ */
+
+.alert-large {
+  padding: 26px 28px;
+}
+
+.alert-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  margin-bottom: 14px;
+}
+
+.alert-large h2 {
+  font-size: 19px;
+  margin-bottom: 8px;
+}
+
+.alert-large p {
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.alert-large h3 {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.alert-large ul {
+  color: var(--ink-soft);
+  font-size: 13.5px;
+}
+
+.alert-red {
+  border-left: 4px solid var(--red);
+  background: linear-gradient(180deg, var(--red-bg), var(--glass));
+}
+
+.alert-orange {
+  border-left: 4px solid var(--orange);
+  background: linear-gradient(180deg, var(--orange-bg), var(--glass));
+}
+
+.alert-yellow {
+  border-left: 4px solid var(--yellow);
+  background: linear-gradient(180deg, var(--yellow-bg), var(--glass));
+}
+
+.alert-green {
+  border-left: 4px solid var(--green);
+  background: linear-gradient(180deg, var(--green-bg), var(--glass));
+}
+
+/* ============================================================
+   MAP PAGE
+   ============================================================ */
+
+.map-frame {
+  height: 520px;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ============================================================
+   CLIMATE PAGE
+   ============================================================ */
+
+.climate-card {
+  padding: 24px 26px;
+}
+
+.climate-card > span:first-child {
+  font-size: 26px;
+}
+
+.climate-card h2 {
+  font-size: 17px;
+  margin: 6px 0 4px;
+}
+
+.climate-card > p {
+  color: var(--ink-soft);
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.chart-placeholder {
+  font-size: 40px;
+  text-align: center;
+  padding: 60px 0;
+  opacity: 0.4;
+}
+
+.temperature-chart,
+.rainfall-chart {
+  margin-top: 10px;
+}
+
+/* ============================================================
+   ADVISORY PAGE
+   ============================================================ */
+
+.advisory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.advisory-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 6px;
+  padding: 22px 20px;
+  border: 1px solid var(--glass-edge);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-lg);
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  box-shadow: 0 10px 26px var(--glass-shadow);
+}
+
+.advisory-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px var(--glass-shadow);
+}
+
+.advisory-card > span:first-child {
+  font-size: 30px;
+}
+
+.advisory-card h2 {
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+.advisory-card p {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.advisory-card.alert-red {
+  border-left-color: var(--red);
+}
+
+.advisory-card.alert-orange {
+  border-left-color: var(--orange);
+}
+
+.advisory-card.alert-yellow {
+  border-left-color: var(--yellow);
+}
+
+.advisory-card.alert-green {
+  border-left-color: var(--green);
+}
+
+/* ============================================================
+   CHAT PAGE
+   ============================================================ */
+
+.chat-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 24px 0;
+}
+
+.chat-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  box-shadow: 0 10px 30px var(--glass-shadow);
+  margin-bottom: 16px;
+}
+
+.chat-header h1 {
+  font-size: 22px;
+  margin-top: 4px;
+}
+
+.chat-header p {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+  max-width: 50ch;
+}
+
+.ai-status {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--green);
+  background: var(--green-bg);
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.suggestions button {
+  border: 1px solid var(--glass-edge);
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 9px 14px;
+  border-radius: 999px;
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.suggestions button:hover {
+  transform: translateY(-1px);
+  background: var(--glass-strong);
+}
+
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  min-height: 320px;
+  max-height: 520px;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px var(--glass-shadow);
+}
+
+.bot-message,
+.user-message {
+  display: flex;
+  gap: 10px;
+  max-width: 85%;
+  animation: message-in 220ms ease;
+}
+
+.user-message {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+@keyframes message-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.bot-message > div,
+.user-message > div {
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+}
+
+.user-message > div {
+  background: var(--accent);
+  color: white;
+}
+
+.user-message strong {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 11px;
+}
+
+.bot-message strong {
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.bot-message p,
+.user-message p {
+  font-size: 14px;
+  margin-top: 3px;
+}
+
+.chat-input-area {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  box-shadow: 0 10px 26px var(--glass-shadow);
+}
+
+.chat-input-area input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+}
+
+.send-button {
+  border: none;
+  background: var(--accent);
+  color: white;
+  font-size: 16px;
+  width: 44px;
+  border-radius: var(--radius-sm);
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.send-button:hover:not(:disabled) {
+  background: var(--accent-2);
+  transform: translateY(-1px);
+}
+
+.send-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.demo-note {
+  text-align: center;
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 14px;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   RESPONSIVE — TABLET
+   ============================================================ */
+
+@media (max-width: 960px) {
+  .welcome {
+    grid-template-columns: 1fr;
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .advisory-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .forecast {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ============================================================
+   RESPONSIVE — MOBILE
+   ============================================================ */
+
+@media (max-width: 640px) {
+  .topbar {
+    flex-wrap: wrap;
+    padding: 14px 16px;
+  }
+
+  .top-actions button {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .navigation {
+    margin: 10px 12px 0;
+    justify-content: flex-start;
+  }
+
+  .dashboard,
+  .feature-page,
+  .chat-page {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .weather-main {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .forecast {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .forecast-detail-row {
+    grid-template-columns: 1fr 0.5fr 1fr 1fr;
+    font-size: 12px;
+  }
+
+  .chat-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .advisory-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-header {
+    flex-direction: column;
+  }
+
+  .ai-status {
+    align-self: flex-start;
+  }
+
+  .bot-message,
+  .user-message {
+    max-width: 95%;
+  }
+
+  .map-frame {
+    height: 380px;
+  }
+}
